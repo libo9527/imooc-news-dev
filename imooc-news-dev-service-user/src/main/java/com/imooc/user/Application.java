@@ -3,6 +3,7 @@ package com.imooc.user;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
+import tk.mybatis.spring.annotation.MapperScan;
 
 /**
  * @author bo li
@@ -10,6 +11,7 @@ import org.springframework.context.annotation.ComponentScan;
  */
 // 因为还要扫描 imooc-news-dev-service-api 中的配置，所以要把扫描范围扩大
 @ComponentScan(basePackages = "com.imooc")
+@MapperScan(basePackages = "com.imooc.user.mapper")
 @SpringBootApplication
 public class Application {
 

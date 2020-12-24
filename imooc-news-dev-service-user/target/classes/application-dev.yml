@@ -4,6 +4,10 @@ server:
 spring:
   redis:
     database: 0
-    host: 192.168.0.202
+    host: 172.16.178.130
     port: 6379
     password: 123456
+
+# 设置域名，在java代码中获取，这里是资源配置
+website:
+  domain-name: imoocnews.com
