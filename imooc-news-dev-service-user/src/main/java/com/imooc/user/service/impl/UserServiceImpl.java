@@ -10,6 +10,7 @@ import com.imooc.user.mapper.AppUserMapper;
 import com.imooc.user.service.UserService;
 import com.imooc.utils.DateUtil;
 import com.imooc.utils.DesensitizationUtil;
+import com.imooc.utils.JsonUtils;
 import com.imooc.utils.RedisOperator;
 import org.n3r.idworker.Sid;
 import org.springframework.beans.BeanUtils;
@@ -84,6 +85,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updateUserInfo(UpdateUserInfoBO updateUserInfoBO) {
+        String userId = updateUserInfoBO.getId();
+
         AppUser userInfo = new AppUser();
         BeanUtils.copyProperties(updateUserInfoBO, userInfo);
 
@@ -93,6 +96,18 @@ public class UserServiceImpl implements UserService {
         int result = appUserMapper.updateByPrimaryKeySelective(userInfo);
         if (result != 1) {
             GraceException.display(ResponseStatusEnum.USER_UPDATE_ERROR);
+        }
+
+        // 再次查询用户的最新信息，放入redis中
+        AppUser user = getUser(userId);
+        redis.set(REDIS_USER_INFO + ":" + userId, JsonUtils.objectToJson(user));
+
+        // 缓存双删策略
+        try {
+            Thread.sleep(100);
+            redis.del(REDIS_USER_INFO + ":" + userId);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 }
