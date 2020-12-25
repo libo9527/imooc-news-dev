@@ -1,5 +1,0 @@
-com/imooc/api/BaseController.class
-com/imooc/api/exception/GraceExceptionHandler.class
-com/imooc/api/exception/MyCustomException.class
-com/imooc/api/exception/GraceException.class
-com/imooc/api/config/CorsConfig.class
