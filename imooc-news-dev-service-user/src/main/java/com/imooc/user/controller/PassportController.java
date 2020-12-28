@@ -9,6 +9,7 @@ import com.imooc.pojo.AppUser;
 import com.imooc.pojo.bo.RegistLoginBO;
 import com.imooc.user.service.UserService;
 import com.imooc.utils.IPUtil;
+import com.imooc.utils.JsonUtils;
 import com.imooc.utils.SMSUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -96,7 +97,7 @@ public class PassportController extends BaseController implements PassportContro
             // 保存token到redis
             String uToken = UUID.randomUUID().toString();
             redis.set(REDIS_USER_TOKEN + ":" + user.getId(), uToken);
-//            redis.set(REDIS_USER_INFO + ":" + user.getId(), JsonUtils.objectToJson(user));
+            redis.set(REDIS_USER_INFO + ":" + user.getId(), JsonUtils.objectToJson(user));
 
             // 保存用户id和token到cookie中
             setCookie(request, response, "utoken", uToken, COOKIE_MONTH);
@@ -110,5 +111,16 @@ public class PassportController extends BaseController implements PassportContro
         return GraceJSONResult.ok(userActiveStatus);
     }
 
+    @Override
+    public GraceJSONResult logout(String userId,
+                                  HttpServletRequest request,
+                                  HttpServletResponse response) {
 
+        redis.del(REDIS_USER_TOKEN + ":" + userId);
+
+        setCookie(request, response, "utoken", "", COOKIE_DELETE);
+        setCookie(request, response, "uid", "", COOKIE_DELETE);
+
+        return GraceJSONResult.ok();
+    }
 }
